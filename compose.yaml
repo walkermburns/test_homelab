@@ -31,6 +31,7 @@ services:
       - 9696:9696 # prowlarr
     volumes:
       - ./gluetun:/gluetun
+      - ./wg0.conf:/gluetun/wireguard/wg0.conf # bind-mount wireguard configuration file
     # Make a '.env' file in the same directory.
     env_file:
       - .env
