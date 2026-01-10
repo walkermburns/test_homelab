@@ -1,0 +1,42 @@
+networks:
+
+  secure_net: # Secure Network under VPN
+    name: secure_network
+    ipam:
+      config:
+        - subnet: 172.39.0.0/24 # Only last Octet
+
+  private_net:
+    name: private_network
+    ipam:
+      config:
+        - subnet: 172.40.0.0/24
+
+services:
+
+  gluetun: # VPN Client
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun # If running on an LXC see readme for more info.
+    networks:
+      secure_net:
+        ipv4_address: 172.39.0.2
+    ports:
+      - 8080:8080 # qbittorrent web interface
+      - 6881:6881 # qbittorrent torrent port
+      - 6789:6789 # nzbget
+      - 9696:9696 # prowlarr
+    volumes:
+      - ./gluetun:/gluetun
+    # Make a '.env' file in the same directory.
+    env_file:
+      - .env
+    healthcheck:
+      test: ping -c 1 www.google.com || exit 1
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
