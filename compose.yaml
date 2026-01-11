@@ -54,6 +54,7 @@ services:
     volumes:
       - ./deluge:/config
       - /media/4tb/Downloads:/downloads
+      - /media/4tb/data/torrents:/data/torrents # Have to link as /data so *arr can read the path as they also use /data
     depends_on:
       gluetun:
         condition: service_healthy
@@ -113,6 +114,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./radarr:/config
       - /media/4tb/plexMovies:/media
+      - /media/4tb/data:/data
     network_mode: service:gluetun
     depends_on:
       gluetun:
