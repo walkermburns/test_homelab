@@ -1,2 +1,7 @@
 *.conf
 .env
+/deluge
+/gluetun
+/radarr
+/sonarr
+/prowlarr
