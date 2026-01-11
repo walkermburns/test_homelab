@@ -110,6 +110,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./sonarr:/config
       - /media/4tb/plexMovies:/media
+      - /media/4tb/data:/data
     network_mode: service:gluetun
     depends_on:
       gluetun:
