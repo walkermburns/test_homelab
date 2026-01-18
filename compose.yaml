@@ -23,10 +23,12 @@ services:
       - 6881:6881 # deluge torrent port
       - 6881:6881/udp # deluge torrent port
       # - 6789:6789 # nzbget
-      - 9696:9696 # prowlarr
-      - 7878:7878 # radarr
-      - 8989:8989 # sonarr
-      - 8191:8191 # flaresolverr
+
+      # Port forwarding required if attaching containers to gluetun network
+      # - 9696:9696 # prowlarr
+      # - 7878:7878 # radarr
+      # - 8989:8989 # sonarr
+      # - 8191:8191 # flaresolverr
     volumes:
       - ./gluetun:/gluetun
       - ./wg0.conf:/gluetun/wireguard/wg0.conf # bind-mount wireguard configuration file
@@ -75,11 +77,13 @@ services:
       - TZ=${TZ}
       - LOG_LEVEL=info
     restart: unless-stopped
-    network_mode: service:gluetun
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
+
+    ports:
+      - 8191:8191 # flaresolverr
+    
+    networks:
+        secure_net:
+          ipv4_address: 172.39.0.5
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
@@ -92,11 +96,13 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ./prowlarr:/config
     restart: unless-stopped
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
-    network_mode: service:gluetun
+
+    ports:
+      - 9696:9696 # prowlarr
+
+    networks:
+        secure_net:
+          ipv4_address: 172.39.0.6
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -111,11 +117,13 @@ services:
       - ./sonarr:/config
       - /media/4tb/plexMovies:/media
       - /media/4tb/data:/data
-    network_mode: service:gluetun
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
+
+    ports:
+      - 8989:8989 # sonarr
+
+    networks:
+      secure_net:
+        ipv4_address: 172.39.0.7
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -130,8 +138,10 @@ services:
       - ./radarr:/config
       - /media/4tb/plexMovies:/media
       - /media/4tb/data:/data
-    network_mode: service:gluetun
-    depends_on:
-      gluetun:
-        condition: service_healthy
-        restart: true
+
+    ports:
+      - 7878:7878 # radarr
+
+    networks:
+      secure_net:
+        ipv4_address: 172.39.0.8
