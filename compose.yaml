@@ -8,6 +8,51 @@ networks:
 
 services:
 
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+
+    restart: always
+
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./portainer:/data"
+
+    ports:
+    - "8000:8000/tcp"
+    - "9443:9443/tcp"
+
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+
+    devices:
+      - "/dev/dvb/:/dev/dvb/" # TV tuner
+    
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - VERSION=docker
+
+    volumes:
+      - "/media/4tb/plexMovies/movies:/Movies"
+      - "/media/4tb/plexMovies/tvShows:/tvShows"
+      - /media/4tb/data/media:/media
+      - "./plex:/config"
+
+    ports:
+      - "32402:32400/tcp" # My weird port mapping, can just use 32400
+
+    hostname: "walker-server"
+    
+    restart: unless-stopped
+
+    networks:
+        secure_net:
+          ipv4_address: 172.39.0.3
+
+
   gluetun: # VPN Client
     image: qmcgaw/gluetun
     container_name: gluetun
