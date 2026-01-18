@@ -1,5 +1,6 @@
 Created roughly following the guide from https://github.com/TechHutTV/homelab with custom modifications to not be so extra.
 There is also the guide https://trash-guides.info/ with some other information
+[Docker autocompose](https://github.com/Red5d/docker-autocompose) generates a compose file from existing containers that I used to compare
 # Setting Up Gluetun
 Gluetun setup instructions [here](https://github.com/qdm12/gluetun?tab=readme-ov-file#setup)
 
